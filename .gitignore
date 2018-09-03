@@ -1,0 +1,9 @@
+/target/
+/.settings/
+.project
+.classpath
+.class
+usingStandards.txt
+.properties
+.prefs
+pom.properties
