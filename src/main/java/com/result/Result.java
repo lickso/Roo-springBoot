@@ -5,16 +5,10 @@ public class Result<T> {
 	private String msg;
 	private T data;
 
-	/**
-	 * 成功时候的调用
-	 * */
 	public static <T> Result<T> success(T data){
 		return new  Result<T>(data);
 	}
 	
-	/**
-	 * 失败时候的调用
-	 * */
 	public static <T> Result<T> error(CodeMsg cm){
 		return new  Result<T>(cm);
 	}
