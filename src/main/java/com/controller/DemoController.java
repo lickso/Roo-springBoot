@@ -3,6 +3,8 @@ package com.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSONObject;
 import com.bean.Test;
 import com.bean.User;
+import com.exception.RooIntfServiceException;
 import com.result.CodeMsg;
 import com.result.Result;
 import com.service.TestService;
@@ -21,7 +24,7 @@ import com.service.TestService;
 
 @Controller
 @RequestMapping("/demo")
-public class DemoController {
+public class DemoController extends BaseController{
 	
 	//日志输出
 	private static final transient Logger logger = Logger.getLogger(DemoController.class);
@@ -125,5 +128,22 @@ public class DemoController {
  		return Result.success(arrayList);
     }
  	
+ 	/*定义接口异常*/
+ 	@RequestMapping(value="/intfError", method=RequestMethod.POST)
+ 	@ResponseBody
+    public Result<String> intfError() throws RooIntfServiceException {
+ 		
+ 		throw new RooIntfServiceException("接口服务异常");
+ 		//return Result.success("success");
+    }
  	
+ 	/*入参格式校验*/
+ 	@RequestMapping(value="/intfParamError", method=RequestMethod.POST)
+ 	@ResponseBody
+    public Result<String> intfParamError(HttpServletRequest request) throws RooIntfServiceException {
+ 		
+ 		JSONObject jsonObj = super.getInputParamObject(request);
+ 		//throw new RooIntfServiceException("接口服务异常");
+ 		return Result.success("success");
+    }
 }
