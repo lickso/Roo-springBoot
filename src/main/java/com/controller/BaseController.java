@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.exception.RooIntfServiceException;
 
 /**
  * 公共控制器
@@ -98,4 +99,51 @@ private static final transient Logger logger = Logger.getLogger(BaseController.c
         return inObject;
 	}
 
+	/**
+	 * @author yangsheng
+	 * @version 1.1
+	 * @param request
+	 * @return JsonObject
+	 * @throws RooIntfServiceException
+	 */
+	public JSONObject getInputParamObject(HttpServletRequest request) throws RooIntfServiceException{
+		
+		BufferedReader br = null;
+		String reqStr = "";
+		try {
+			request.setCharacterEncoding("UTF-8");
+			br = new BufferedReader(new InputStreamReader( request.getInputStream(),"utf-8"));
+			String line = null;
+		    StringBuilder sb = new StringBuilder();
+		    while((line = br.readLine())!=null){
+	            sb.append(line);
+	        }
+		    reqStr = String.valueOf(sb);
+		    logger.info("入参请求报文:" + String.valueOf(sb));
+		}catch (UnsupportedEncodingException e) {
+			logger.info("请求入参编码异常！");
+			throw new RooIntfServiceException(102);
+		}catch (IOException e) {
+			logger.info("io流异常！");
+			throw new RooIntfServiceException(102);
+		}finally {
+			try {
+				if(null != br) {
+					br.close();
+				}
+			} catch (IOException e) {
+				logger.info("关闭读取流失败！");
+				throw new RooIntfServiceException(102);
+			}
+		}
+        
+		JSONObject inObject = new JSONObject();
+		try {
+			inObject = (JSONObject) JSON.parse(reqStr);
+		}catch(Exception e) {
+			throw new RooIntfServiceException(102);
+		}
+        return inObject;
+	}
+	
 }
