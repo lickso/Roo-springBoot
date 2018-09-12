@@ -3,9 +3,18 @@ package com.utils;
 import java.util.HashMap;
 import java.util.Map;
 
-/*项目常量集合*/
 public class LocalConstants {
 	
+	//系统异常枚举
+	private static final Map<Integer,String>  ROO_SYS_ERROR_MAPPER = new HashMap<Integer,String>();
+	static{
+		ROO_SYS_ERROR_MAPPER.put(101, "服务接口异常");
+		ROO_SYS_ERROR_MAPPER.put(102, "服务接口入参异常");
+	}
+	public static String getSysErrorValue(int code) {
+		return ROO_SYS_ERROR_MAPPER.get(code);
+	}
+
 	/*系统静态字段*/
 	public static abstract interface CONST_SET {
 		//服务地址
