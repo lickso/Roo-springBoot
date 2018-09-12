@@ -26,7 +26,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
 
-		String userIp = (request.getHeader("x-forwarded-for") == null) ? request
+		/*String userIp = (request.getHeader("x-forwarded-for") == null) ? request
 				.getRemoteAddr() : request.getHeader("x-forwarded-for");
 
 		// 获得请求的URI
@@ -51,7 +51,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 			out.println("</html>");
 			// res.setHeader("refresh", "0;url=login.jsp");
 			return false;
-		}
+		}*/
 
 		return true;
 	}
@@ -61,7 +61,6 @@ public class LoginInterceptor implements HandlerInterceptor {
 	public void postHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
-
 	}
 
 	// 在整个请求结束之后被调用，也就是在DispatcherServlet 渲染了对应的视图之后执行（主要是用于进行资源清理工作）
