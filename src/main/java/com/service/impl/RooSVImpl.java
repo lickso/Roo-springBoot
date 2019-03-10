@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
@@ -16,10 +18,15 @@ import com.bean.Contact;
 import com.bean.Customer;
 import com.bean.User;
 import com.dao.interfaces.IUserDAO;
+import com.exception.RooIntfServiceException;
+import com.filter.AccessLimit;
+import com.redis.MiaoshaUserKey;
+import com.redis.RedisService;
 import com.service.interfaces.IContactSV;
 import com.service.interfaces.ICustomerSV;
 import com.service.interfaces.IRooSV;
 import com.utils.RooCommonUtils;
+import com.utils.UUIDUtil;
 
 @Service
 public class RooSVImpl implements IRooSV{
@@ -44,27 +51,53 @@ public class RooSVImpl implements IRooSV{
 	@Autowired  
 	private HttpSession session;  
 
+	//添加redis服务
+	@Autowired
+	RedisService redisService;
+	
+	//经过改造的登录逻辑方法，先核对登录信息，如果是正确，将token返回添加到cookie中，key-token；value-user
+	@Override
+	public String login(HttpServletResponse response,String name, String password) throws RooIntfServiceException {
+		
+		if(name.equals("") || password.equals("")) {
+			throw new RooIntfServiceException("登录名，密码为空！");
+		}
+		user = userDAO.qryByNameAndPswd(name, password);
+		if(null == user) {
+			throw new RooIntfServiceException("登录名，密码不正确！");
+		}
+		
+		//生成cookie
+		String token = UUIDUtil.uuid();
+		addCookie(response, token, user);
+		return token;
+	}
+	
+	//经过改良的获取登录用户的信息，由于用户在登录成功后服务器会将token信息进行cookie存储，通过通ken获取用户
+	public User getByToken(HttpServletResponse response, String token) {
+		if(token.equals("")) {
+			return null;
+		}
+		User user = redisService.get(MiaoshaUserKey.token, token, User.class);
+		
+		//如果通过token获取到了用户信息，那么说明用户是有效用户，则延长token的redis有效期
+		if(user != null) {
+			addCookie(response, token, user);
+		}
+		return user;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<User> qryAllUser() {
 		return (List<User>) userDAO.qryAll();
-	}
-
-	@Override
-	public Boolean login(String name, String password) {
-		try {
-			user = userDAO.qryByNameAndPswd(name, password);
-			if(null == user) {
-				return false;
-			}else {
-				session=request.getSession();
-				session.setAttribute("isLogin", true);
-				session.setAttribute("user", user);
-				return true;
-			}
-		}catch(Exception e) {
-			return false;
-		}
 	}
 
 	@Override
@@ -196,6 +229,7 @@ public class RooSVImpl implements IRooSV{
 	}
 
 	@Override
+	@AccessLimit(maxCount = 1, seconds = 0,needLogin = true)
 	public List<Contact> qryAllTips() {
 		try {
 			List<Contact> newContactList = new ArrayList();
@@ -233,4 +267,11 @@ public class RooSVImpl implements IRooSV{
 		}
 	}
 
+	private void addCookie(HttpServletResponse response, String token, User user) {
+		redisService.set(MiaoshaUserKey.token, token, user);
+		Cookie cookie = new Cookie("COOKI_NAME_TOKEN", token);
+		cookie.setMaxAge(MiaoshaUserKey.token.expireSeconds());
+		cookie.setPath("/");
+		response.addCookie(cookie);
+	}
 }

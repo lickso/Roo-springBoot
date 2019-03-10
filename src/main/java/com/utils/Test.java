@@ -1,15 +1,24 @@
 package com.utils;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.JedisShardInfo;
+import redis.clients.jedis.ShardedJedis;
+import redis.clients.jedis.ShardedJedisPool;
 
 public class Test {
 	public static void main(String[] args) {
@@ -80,31 +89,111 @@ public class Test {
 		System.out.println(sumConvert("22.0"));*/
 		
 		
-		Map<String,Object> oweFee = new HashMap<String,Object>();
+		/*Map<String,Object> oweFee = new HashMap<String,Object>();
 		List<Map<String,Object>> list = new ArrayList();
 		for(int i=0;i<10;i++) {
 			
 			oweFee.put("key", i);
 			list.add(oweFee);
 		}
-		System.out.println(list);
+		System.out.println(list);*/
+		
+		/*DecimalFormat df=new DecimalFormat("0.00");
+	    System.out.println(df.format((float)102/100));*/
+		
+		/*double creditLines = 102/100;
+		System.out.println(creditLines);*/
+		
+	    /*Map<String,Object> oweFee = new HashMap<String,Object>();
+	    oweFee.put("", "1");
+	    oweFee.put("1", "2");
+	    System.out.println(oweFee.get(""));*/
+		
+		
+		
+		//redis 测试
+		//public Jedis jedis;
+		//public  jedisPool;
+		
+		/*JedisPoolConfig config = new JedisPoolConfig();
+        config.setMaxIdle(20);
+        config.setMaxIdle(5);
+        config.setMaxWaitMillis(1000l);
+        config.setTestOnBorrow(false);
+        JedisPool jedisPool = new JedisPool(config, "192.168.1.102", 6379);*/
+        
+        
+        //连接本地的 Redis 服务
+       /* Jedis jedis = new Jedis("192.168.19.129");
+        System.out.println("Connection to server sucessfully");
+        
+        jedis.set("name1", "yangsheng");
+        System.out.println("Stored string in redis:: "+ jedis.get("name"));*/
+        
+		//redis 密码测试
+		/*ShardedJedis jedis = pool.getResource();
+        String keys = "myname";
+        String vaule = jedis.set(keys, "lxr");
+        System.out.println(jedis.get("myname"));*/
+		
+		//浮点溢出
+		Double a = 1.01;
+		Double b = 1.02;
+		
+		
+		
+	   BigDecimal b1 = new BigDecimal(a.toString());  
+	   BigDecimal b2 = new BigDecimal(b.toString()); 
+	   BigDecimal b3 = new BigDecimal("1"); 
+	   BigDecimal b4 = new BigDecimal("1"); 
+	   
+//	   System.out.println(a+b);
+	   
+	   
+	   
+	   
+	   
+	   
+	   Double s = b1.add(b2).add(b3).add(b4).doubleValue();
+	   
+	   /*System.out.println(b1.add(b2).add(b3).add(b4));
+	   System.out.println(s);*/
+	   //return new Double(b1.add(b2).doubleValue());  
+		
+		float c = (float) 1.01;
+		float d = (float) 1.02;
+//		System.out.println(c+d);
+		
+		Double roamGatCallfee = "".equals("1.01")?0:Double.parseDouble("1.01");
+		Double roamOutCallfee = "".equals("1.02")?0:Double.parseDouble("1.02");
+		Double airtime = roamGatCallfee + roamOutCallfee;
+		//System.out.println(airtime);
+		
+		//long sixmonthFlowAll = 10000;
+		//double  avgSixmonthFlowDouble = (double)sixmonthFlowAll/6/1024;
+		//System.out.println(avgSixmonthFlowDouble);
+		
+		
+		Double changeAfter = (double) (5001/100);
+		 DecimalFormat df=new DecimalFormat("0.00");
+		 System.out.println(String.valueOf(df.format(changeAfter)));
+		
 	}
 	
-	public static String sumConvert(String sum) {
-		if(sum.contains(".")) {
-			int index = sum.indexOf(".");
-			int length = sum.length();
-			System.out.println("index:"+index);
-			System.out.println("length:"+length);
-			
-			if(length - index == 2) {
-				sum = sum + "0";
-			}else if (length - index == 1) {
-				sum = sum + "00";
-			}
-		}else {
-			sum += ".00";
-		}
-		return sum;
-	}
+	/*private static ShardedJedisPool pool;
+    static {
+        JedisPoolConfig config = new JedisPoolConfig();
+        config.setMaxTotal(100);
+        config.setMaxIdle(50);
+        config.setMaxWaitMillis(3000);
+        config.setTestOnBorrow(true);
+        config.setTestOnReturn(true);
+        // 集群
+        JedisShardInfo jedisShardInfo1 = new JedisShardInfo("192.168.19.129", 6379);
+        jedisShardInfo1.setPassword("ys123456");
+        List<JedisShardInfo> list = new LinkedList<JedisShardInfo>();
+        list.add(jedisShardInfo1);   
+        pool = new ShardedJedisPool(config, list);
+    }*/
+
 }

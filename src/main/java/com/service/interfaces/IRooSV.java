@@ -2,8 +2,11 @@ package com.service.interfaces;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import com.bean.Contact;
 import com.bean.User;
+import com.exception.RooIntfServiceException;
 
 
 public interface IRooSV {
@@ -12,7 +15,7 @@ public interface IRooSV {
 	public List<User> qryAllUser();
 	
 	//用户登录操作
-	public Boolean login(String name,String password);
+	public String login(HttpServletResponse response,String name,String password)  throws RooIntfServiceException ;
 	
 	//用户注销操作
 	public Boolean logout();

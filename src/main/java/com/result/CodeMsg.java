@@ -96,7 +96,12 @@ public class CodeMsg {
 	//姓名客户ID查询联系记录 1017xx
 	public static CodeMsg CANTACT_USER_BY_CUSTOMID_SUCCESS = new CodeMsg(101701, "联系记录信息不为空");
 	public static CodeMsg CANTACT_USER_BY_CUSTOMID_FAIL = new CodeMsg(101702, "联系记录信息为空");
-		
+	
+	//姓名客户ID查询联系记录 1017xx
+	public static CodeMsg SESSION_ERROR = new CodeMsg(202, "session 异常");
+	
+	public static CodeMsg ACCESS_LIMIT_REACHED= new CodeMsg(500104, "访问太频繁！");
+	
 	public CodeMsg(int code, String msg) {
 		this.code = code;
 		this.msg = msg;
